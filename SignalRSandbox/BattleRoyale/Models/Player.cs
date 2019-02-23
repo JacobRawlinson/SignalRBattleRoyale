@@ -13,5 +13,6 @@ namespace SignalRSandbox.BattleRoyale.Models
         public Weapon Weapon { get; set; }
         public List<AttackResult> Kills { get; set; } = new List<AttackResult>();
         public int KillCount => Kills.Count();
+        public bool IsBot { get; set; }
      }
 }

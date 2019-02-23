@@ -4,29 +4,31 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using SignalRSandbox.BattleRoyale.Helpers;
+using SignalRSandbox.BattleRoyale.Models;
 
 namespace SignalRSandbox
 {
     public class ChatHub : Hub
     {
-        private List<string> players = new List<string>()
-        {
-            "Matt",
-            "Leanne",
-            "Sarmon",
-            "Gideon",
-            "Claire",
-            "Will",
-            "Gaz",
-            "Pete",
-            "Sean",
-            "Kyle",
-            "Walshy",
-            "Andy H",
-            "Jacob",
-            "Chris",
-            "Stacy"
-        };
+        public static HashSet<string> players = new HashSet<string>();
+        public static Leaderboard leaderboard = new Leaderboard { LeaderboardEntries = new HashSet<PlayerStats>() };
+        //{
+        //    "Matt",
+        //    "Leanne",
+        //    "Sarmon",
+        //    "Gideon",
+        //    "Claire",
+        //    "Will",
+        //    "Gaz",
+        //    "Pete",
+        //    "Sean",
+        //    "Kyle",
+        //    "Walshy",
+        //    "Andy H",
+        //    "Jacob",
+        //    "Chris",
+        //    "Stacy"
+        //};
 
         public void Send(string name, string message)
         {
@@ -34,8 +36,17 @@ namespace SignalRSandbox
 
             if (message == "StartMatch")
             {
+                var botNumber = 1; //In case there are not enough players
                 GameHelper gh = new GameHelper();
-                gh.Start(this, players);
+                
+                while (players.Count < 5)
+                {
+                    
+                    players.Add($"Bot {botNumber}");
+                    botNumber++;
+                }
+
+                gh.Start(this, players.ToList(), leaderboard);
             }
             else
             {
@@ -51,6 +62,11 @@ namespace SignalRSandbox
         public void JoinChat(string name)
         {
             Clients.All.broadcastMessage(name + " is viewing the match");
+        }
+
+        public void AddPlayer(string name)
+        {
+            players.Add(name);
         }
     }
 }

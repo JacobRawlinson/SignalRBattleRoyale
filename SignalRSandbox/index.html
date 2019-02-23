@@ -21,6 +21,7 @@
         <div class="chatInput" style="">
             <input type="text" id="message"/>
             <input type="button" id="sendmessage" value="Send" />
+            <input type="button" id="addPlayer" value="Add Player" />
         </div>
         <input type="hidden" id="displayname" />
         <ul id="discussion"></ul>
@@ -66,6 +67,11 @@
                     // Call the Send method on the hub.
                     chat.server.send(displayName, $('#message').val());
                     // Clear text box and reset focus for next comment.
+                    $('#message').val('').focus();
+                });
+
+                $('#addPlayer').click(function () {
+                    chat.server.addPlayer(displayName);
                     $('#message').val('').focus();
                 });
             });
