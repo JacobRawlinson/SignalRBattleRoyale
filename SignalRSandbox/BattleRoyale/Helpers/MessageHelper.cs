@@ -53,6 +53,12 @@ namespace SignalRSandbox.BattleRoyale.Helpers
                     case PlayerAction.Cower:
                         message = $"{result.ActingPlayer.Name} cowers in fear";
                         break;
+                    case PlayerAction.Violated:
+                        message = $"{result.ActingPlayer.Name} violates {result.TargetPlayer.Name}'s corpse with {result.ActingPlayer.Weapon.Name}";
+                        break;
+                    case PlayerAction.Gouged:
+                        message = $"{result.ActingPlayer.Name} gouged {result.TargetPlayer.Name}'s eyes out with a spoon";
+                        break;
                     default:
                         message = $"{result.ActingPlayer.Name} gorms into the sky";
                         break;

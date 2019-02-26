@@ -15,7 +15,7 @@ namespace SignalRSandbox.BattleRoyale.Helpers
         private List<Weapon> weaponPool = new List<Weapon>();
         private ChatHub hub;
         
-        public void Start(ChatHub chatHub, List<string> playerNames)
+        public void Start(ChatHub chatHub, List<string> playerNames, Leaderboard leaderboard)
         {
             hub = chatHub;
             players = new List<Player>();
@@ -24,9 +24,16 @@ namespace SignalRSandbox.BattleRoyale.Helpers
             {
                 var player = new Player()
                 {
-                    Name = name
+                    Name = name,
+                    IsBot = name.StartsWith("Bot")
                 };
                 players.Add(player);
+                var newPlayer = new PlayerStats { Player = name };
+
+                if (!player.IsBot)
+                {
+                    leaderboard.LeaderboardEntries.Add(newPlayer);
+                }
             }
 
             var WeaponHelper = new WeaponHelper();
@@ -39,7 +46,12 @@ namespace SignalRSandbox.BattleRoyale.Helpers
             WarPhase();
 
             var winner = players.First(p => p.State != PlayerState.Dead);
-
+            if (!winner.IsBot)
+            {
+                var leaderboardEntry = leaderboard.LeaderboardEntries.Where(x => x.Player == winner.Name).FirstOrDefault();
+                leaderboardEntry.Wins++;
+                leaderboardEntry.TotalKills += winner.KillCount;
+            }
             hub.Broadcast("--------------------------------------------------");
             hub.Broadcast(messageHelper.PlayerWins(winner));
             hub.Broadcast("--------------------------------------------------");
@@ -129,12 +141,30 @@ namespace SignalRSandbox.BattleRoyale.Helpers
                         }
                     }
                 }
+                else if (diceRoll <= 7 && deadPlayers.Any())
+                {
+                    var targetPlayerIndex = rnd.Next(0, deadPlayers.Count());
+                    var target = deadPlayers[targetPlayerIndex];
+
+                    var gouged = actionHelper.GougedAction(actingPlayer, target);
+
+                    hub.Broadcast(messageHelper.GetMessageForAction(gouged));
+                }
                 else if (diceRoll <= 8 && deadPlayers.Any())
                 {
                     var targetPlayerIndex = rnd.Next(0, deadPlayers.Count());
                     var target = deadPlayers[targetPlayerIndex];
 
                     var teabag = actionHelper.TeabagAction(actingPlayer, target);
+
+                    hub.Broadcast(messageHelper.GetMessageForAction(teabag));
+                }
+                else if (diceRoll <= 9 && deadPlayers.Any())
+                {
+                    var targetPlayerIndex = rnd.Next(0, deadPlayers.Count());
+                    var target = deadPlayers[targetPlayerIndex];
+
+                    var teabag = actionHelper.ViolateAction(actingPlayer, target);
 
                     hub.Broadcast(messageHelper.GetMessageForAction(teabag));
                 }

@@ -71,5 +71,25 @@ namespace SignalRSandbox.BattleRoyale.Helpers
                 Action = PlayerAction.Cower
             };
         }
+
+        public ActionResult ViolateAction(Player actingPlayer, Player targetPlayer)
+        {
+            return new ActionResult()
+            {
+                ActingPlayer = actingPlayer,
+                TargetPlayer = targetPlayer,
+                Action = PlayerAction.Violated
+            };
+        }
+
+        public ActionResult GougedAction(Player actingPlayer, Player targetPlayer)
+        {
+            return new ActionResult()
+            {
+                ActingPlayer = actingPlayer,
+                TargetPlayer = targetPlayer,
+                Action = PlayerAction.Gouged
+            };
+        }
     }
 }

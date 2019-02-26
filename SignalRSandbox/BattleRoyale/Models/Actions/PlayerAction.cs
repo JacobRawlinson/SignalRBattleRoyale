@@ -10,6 +10,8 @@ namespace SignalRSandbox.BattleRoyale.Models.Actions
         Attack,
         Teabag,
         Loot,
-        Cower
+        Cower,
+        Violated,
+        Gouged
     }
 }
