@@ -34,7 +34,7 @@ namespace SignalRSandbox
         {
             // Call the broadcastMessage method to update clients.
 
-            if (message == "StartMatch")
+            if (message.ToLower() == "/startmatch")
             {
                 var botNumber = 1; //In case there are not enough players
                 GameHelper gh = new GameHelper();
@@ -47,6 +47,15 @@ namespace SignalRSandbox
                 }
 
                 gh.Start(this, players.ToList(), leaderboard);
+            }
+            else if (message.ToLower() == "/whois")
+            {
+                Broadcast($"Listing Players");
+
+                foreach (var player in players)
+                {
+                    Broadcast($"{player} is participating");
+                }
             }
             else
             {
@@ -67,6 +76,7 @@ namespace SignalRSandbox
         public void AddPlayer(string name)
         {
             players.Add(name);
+            Broadcast($"{name} has joined the battle royale");
         }
     }
 }
